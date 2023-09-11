@@ -41,9 +41,8 @@
             if (navigator.share) {
                 try {
                     await navigator.share({
-                        title: '分享视频标题',
-                        text: '分享视频描述',
-                        url: `https://www.youtube.com/watch?v=${videoId}`,
+                        title: '分享',
+                        text: '趕快來玩',
                     });
                 } catch (error) {
                     console.error('分享失败:', error);
