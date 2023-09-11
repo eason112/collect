@@ -1,49 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分享视频</title>
-    <style>
-        body {
-            text-align: center;
-        }
-        iframe {
-            width: 100%;
-            max-width: 560px;
-        }
-        button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            font-size: 18px;
-            background-color: #0077B5; /* LinkedIn Blue */
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+    <!-- 省略其他头部信息 -->
 </head>
 <body>
-    <!-- 视频播放器 -->
+    <!-- 视频播放器和分享按钮 -->
     <iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe>
-
-    <!-- 分享按钮 -->
-    <button id="shareButton">分享此视频</button>
+    <button id="shareButton">分享视频</button>
+    
+    <!-- 显示分享次数的元素 -->
+    <p>实际分享次数: <span id="shareCount">0</span></p>
 
     <script>
         // 替换为您要分享的视频的实际视频 ID
         const videoId = 'VIDEO_ID';
 
+        // 获取Cookie
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift();
+            }
+        }
+
+        // 设置Cookie
+        function setCookie(name, value, days) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+        }
+
+        // 更新分享次数并显示在页面上
+        function updateShareCount() {
+            const shareCount = parseInt(getCookie('shareCount')) || 0;
+            const updatedCount = shareCount + 1;
+            setCookie('shareCount', updatedCount, 30); // 30天内有效
+            document.getElementById('shareCount').textContent = updatedCount;
+        }
+
         // 分享按钮点击事件
-        document.getElementById('shareButton').addEventListener('click', async () => {
+        document.getElementById('shareButton').addEventListener('click', () => {
             if (navigator.share) {
                 try {
-                    await navigator.share({
-                        title: '分享',
-                        text: '趕快來玩',
-                        url: 'https://eason112.github.io/collect/',
+                    navigator.share({
+                        title: '分享视频标题',
+                        text: '分享视频描述',
+                        url: `https://www.youtube.com/watch?v=${videoId}`,
+                    }).then(() => {
+                        // 用户实际分享后，更新分享次数
+                        updateShareCount();
+                    }).catch(error => {
+                        console.error('分享失败:', error);
                     });
                 } catch (error) {
                     console.error('分享失败:', error);
@@ -54,7 +62,9 @@
                 // 可以使用传统的分享链接或其他分享方法
             }
         });
+
+        // 初始化时获取并显示分享次数
+        updateShareCount();
     </script>
 </body>
 </html>
-
