@@ -64,7 +64,11 @@
         });
 
         // 初始化时获取并显示分享次数
-        updateShareCount();
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取并显示分享次数，但不要增加它
+            const shareCount = parseInt(getCookie('shareCount')) || 0;
+            document.getElementById('shareCount').textContent = shareCount;
+        });
     </script>
 </body>
 </html>
